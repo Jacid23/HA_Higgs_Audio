@@ -1,6 +1,6 @@
 {
   "domain": "chatterbox_tts",
-  "name": "Chatterbox TTS Integration",
+  "name": "HA_Chatterbox",
   "documentation": "https://github.com/Jacid23/HA_Chatterbox/README.md",
   "issue_tracker": "https://github.com/Jacid23/HA_Chatterbox/issues",
   "dependencies": [],
