@@ -1,25 +1,19 @@
-"""
-Chatterbox TTS Integration for Home Assistant
-
-This integration provides TTS services using the Chatterbox TTS server
-running on the local network (IoT VLAN: 172.30.3.9).
-"""
+"""The Chatterbox TTS integration."""
 import logging
-import requests
-import voluptuous as vol
-from datetime import timedelta
+import os
 
-from homeassistant.const import CONF_HOST, CONF_PORT
+import voluptuous as vol
+import requests
+
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.typing import ConfigType
+from homeassistant.const import CONF_HOST, CONF_PORT
 import homeassistant.helpers.config_validation as cv
-from homeassistant.exceptions import ConfigEntryNotReady
+from homeassistant.helpers.typing import ConfigType
+
+from .const import DOMAIN, DEFAULT_HOST, DEFAULT_PORT
 
 _LOGGER = logging.getLogger(__name__)
-
-DOMAIN = "chatterbox_tts"
-DEFAULT_HOST = "172.30.3.9"
-DEFAULT_PORT = 8005
 
 CONFIG_SCHEMA = vol.Schema(
     {
@@ -35,12 +29,31 @@ CONFIG_SCHEMA = vol.Schema(
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     """Set up the Chatterbox TTS component."""
-    conf = config.get(DOMAIN, {})
-    host = conf.get(CONF_HOST, DEFAULT_HOST)
-    port = conf.get(CONF_PORT, DEFAULT_PORT)
+    hass.data[DOMAIN] = {}
     
-    # Store configuration
-    hass.data[DOMAIN] = {
+    if DOMAIN in config:
+        conf = config[DOMAIN]
+        host = conf.get(CONF_HOST, DEFAULT_HOST)
+        port = conf.get(CONF_PORT, DEFAULT_PORT)
+        
+        # Store configuration for platforms
+        hass.data[DOMAIN] = {
+            "host": host,
+            "port": port,
+            "base_url": f"http://{host}:{port}"
+        }
+    
+    return True
+
+async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+    """Set up Chatterbox TTS from a config entry."""
+    host = entry.data.get(CONF_HOST, DEFAULT_HOST)
+    port = entry.data.get(CONF_PORT, DEFAULT_PORT)
+    
+    hass.data.setdefault(DOMAIN, {})
+    
+    # Store configuration for platforms
+    hass.data[DOMAIN][entry.entry_id] = {
         "host": host,
         "port": port,
         "base_url": f"http://{host}:{port}"
@@ -59,8 +72,25 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     except Exception as ex:
         _LOGGER.error("Cannot connect to Chatterbox TTS server: %s", ex)
         return False
-
-    # Store config for platforms to access
-    hass.data[DOMAIN] = config[DOMAIN]
+    
+    # Forward the setup to the TTS platform
+    hass.async_create_task(
+        hass.config_entries.async_forward_entry_setup(entry, "tts")
+    )
+    
+    entry.async_on_unload(entry.add_update_listener(update_listener))
     
     return True
+
+async def update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None:
+    """Handle options update."""
+    await hass.config_entries.async_reload(entry.entry_id)
+
+async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+    """Unload a config entry."""
+    unload_ok = await hass.config_entries.async_forward_entry_unload(entry, "tts")
+    
+    if unload_ok:
+        hass.data[DOMAIN].pop(entry.entry_id)
+    
+    return unload_ok

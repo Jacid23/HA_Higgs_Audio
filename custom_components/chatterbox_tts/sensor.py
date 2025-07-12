@@ -1,7 +1,7 @@
 """
-Allen TTS Sensor Platform for Home Assistant
+Chatterbox TTS Sensor Platform for Home Assistant
 
-Provides sensors for monitoring Allen TTS server status and queue.
+Provides sensors for monitoring Chatterbox TTS server status and queue.
 """
 import logging
 import requests
@@ -17,7 +17,7 @@ import homeassistant.helpers.config_validation as cv
 _LOGGER = logging.getLogger(__name__)
 
 DEFAULT_HOST = "172.30.3.9"
-DEFAULT_PORT = 8000
+DEFAULT_PORT = 8005
 DEFAULT_SCAN_INTERVAL = timedelta(seconds=60)
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
@@ -29,7 +29,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
 )
 
 def setup_platform(hass, config, add_entities, discovery_info=None):
-    """Set up the Allen TTS sensor platform."""
+    """Set up the Chatterbox TTS sensor platform."""
     host = config.get(CONF_HOST, DEFAULT_HOST)
     port = config.get(CONF_PORT, DEFAULT_PORT)
     scan_interval = config.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL)
@@ -37,14 +37,14 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     base_url = f"http://{host}:{port}"
     
     sensors = [
-        AllenTTSStatusSensor(base_url, scan_interval),
-        AllenTTSQueueSensor(base_url, scan_interval),
+       ChatterboxTTSQueueSensor(base_url, scan_interval),
+       ChatterboxTTSStatusSensor(base_url, scan_interval),
     ]
     
     add_entities(sensors, True)
 
-class AllenTTSStatusSensor(Entity):
-    """Representation of Allen TTS server status sensor."""
+class ChatterboxTTSStatusSensor(Entity):
+    """Representation of Chatterbox TTS server status sensor."""
 
     def __init__(self, base_url, scan_interval):
         """Initialize the sensor."""
@@ -57,12 +57,12 @@ class AllenTTSStatusSensor(Entity):
     @property
     def name(self):
         """Return the name of the sensor."""
-        return "Allen TTS Status"
+        return "Chatterbox TTS Status"
 
     @property
     def unique_id(self):
         """Return unique ID for this sensor."""
-        return "allen_tts_status"
+        return "chatterbox_tts_status"
 
     @property
     def state(self):
@@ -102,10 +102,10 @@ class AllenTTSStatusSensor(Entity):
         except requests.exceptions.RequestException:
             self._state = "unavailable" 
             self._available = False
-            _LOGGER.warning("Could not connect to Allen TTS server")
+            _LOGGER.warning("Could not connect to Chatterbox TTS server")
 
-class AllenTTSQueueSensor(Entity):
-    """Representation of Allen TTS queue sensor."""
+class ChatterboxTTSQueueSensor(Entity):
+    """Representation of Chatterbox TTS queue sensor."""
 
     def __init__(self, base_url, scan_interval):
         """Initialize the sensor."""
@@ -118,12 +118,12 @@ class AllenTTSQueueSensor(Entity):
     @property
     def name(self):
         """Return the name of the sensor."""
-        return "Allen TTS Queue"
+        return "Chatterbox TTS Queue"
 
     @property
     def unique_id(self):
         """Return unique ID for this sensor."""
-        return "allen_tts_queue"
+        return "Chatterbox_tts_queue"
 
     @property
     def state(self):
@@ -168,4 +168,4 @@ class AllenTTSQueueSensor(Entity):
         except requests.exceptions.RequestException:
             self._state = None
             self._available = False
-            _LOGGER.warning("Could not get Allen TTS queue status")
+            _LOGGER.warning("Could not get Chatterbox TTS queue status")

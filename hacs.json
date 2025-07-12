@@ -2,5 +2,10 @@
   "name": "Chatterbox TTS Integration",
   "content_in_root": false,
   "render_readme": true,
-  "homeassistant": "2023.1.0"
+  "homeassistant": "2023.1.0",
+  "hacs": "1.6.0",
+  "domains": ["chatterbox_tts", "tts"],
+  "iot_class": "local_push",
+  "documentation": "https://github.com/Jacid23/HA_Chatterbox/blob/master/README.md",
+  "issue_tracker": "https://github.com/Jacid23/HA_Chatterbox/issues"
 }
