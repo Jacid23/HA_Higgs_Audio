@@ -1,9 +1,12 @@
 {
   "name": "HA Chatterbox TTS",
-  "documentation": "https://github.com/devnen/Chatterbox-TTS-Server/blob/main/README.md",
-  "issue_tracker": "https://github.com/devnen/Chatterbox-TTS-Server/issues",
+  "documentation": "https://github.com/Jacid23/HA_Chatterbox/blob/main/README.md",
+  "issue_tracker": "https://github.com/Jacid23/HA_Chatterbox/issues",
   "filename": "ha_chatterbox",
   "homeassistant": "2025.1.0",
   "render_readme": true,
+  "hide_default_branch": true,
   "domains": ["ha_chatterbox", "tts"],
+  "integration_type": "cloud_polling",
+  "platforms": ["tts"]
 }
