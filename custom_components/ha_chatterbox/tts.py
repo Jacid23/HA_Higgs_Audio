@@ -1,7 +1,15 @@
 """
-HA Chatterbox TTS Platform for Home Assistant
-
-Provides Text-to-Speech services using Chatterbox TTS server.
+HA Chatterbox TTS Platform for Home Assistant    # Create the TTS entity
+    entity = HAChatterboxTTSEntity(
+        hass=hass,
+        entry=entry,
+        host=data["host"],
+        port=data["port"],
+        base_url=data["base_url"]
+    )
+    
+    async_add_entities([entity], True)
+    _LOGGER.debug("Added HA Chatterbox TTS entity: %s", entity.unique_id)s Text-to-Speech services using Chatterbox TTS server.
 """
 import logging
 import requests
@@ -15,27 +23,28 @@ from homeassistant.core import HomeAssistant
 from homeassistant.const import CONF_HOST, CONF_PORT
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import DOMAIN
+from .const import (
+    DOMAIN,
+    DEFAULT_HOST,
+    DEFAULT_PORT,
+    DEFAULT_VOICE,
+    DEFAULT_TEMPERATURE,
+    DEFAULT_EXAGGERATION,
+    DEFAULT_CFG_WEIGHT,
+    DEFAULT_SEED,
+    DEFAULT_SPEED_FACTOR,
+    CONF_VOICE,
+    CONF_TEMPERATURE,
+    CONF_EXAGGERATION,
+    CONF_CFG_WEIGHT,
+    CONF_SEED,
+    CONF_SPEED_FACTOR
+)
 
 _LOGGER = logging.getLogger(__name__)
 
-DEFAULT_HOST = "172.30.3.9"
-DEFAULT_PORT = 8005
-DEFAULT_VOICE = "Emily" 
-DEFAULT_TEMPERATURE = 0.8
-DEFAULT_EXAGGERATION = 1.0
-DEFAULT_CFG_WEIGHT = 0.5
-DEFAULT_SEED = 101
-DEFAULT_SPEED_FACTOR = 1.0
-
 # Configuration constants
 CONF_LANGUAGE = "language"
-CONF_VOICE = "voice"
-CONF_TEMPERATURE = "temperature"
-CONF_EXAGGERATION = "exaggeration"
-CONF_CFG_WEIGHT = "cfg_weight"
-CONF_SEED = "seed"
-CONF_SPEED_FACTOR = "speed_factor"
 CONF_OPTIONS = "options"
 
 async def async_setup_entry(
@@ -69,11 +78,13 @@ def _load_voices_from_strings():
         if os.path.exists(strings_path):
             with open(strings_path, 'r', encoding='utf-8') as f:
                 strings_data = json.load(f)
-                # Extract voice options from strings.json
-                voice_options = strings_data.get("options", {}).get("step", {}).get("init", {}).get("data", {}).get("voice", {}).get("options", [])
-                if voice_options:
-                    _LOGGER.debug("Loaded %d voices from strings.json: %s", len(voice_options), voice_options)
-                    return voice_options
+                # Extract voice options from the voices section
+                voices = strings_data.get("voices", {})
+                if voices:
+                    # Return list of voice IDs (keys)
+                    voice_list = list(voices.keys())
+                    _LOGGER.debug("Loaded %d voices from strings.json: %s", len(voice_list), voice_list)
+                    return voice_list
     except Exception as ex:
         _LOGGER.warning("Could not load voices from strings.json: %s", ex)
     
