@@ -1,235 +1,152 @@
-# HA Chatterbox TTS
+# HA Chatterbox TTS Client Integration
 
-[![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/custom-components/hacs)
-[![GitHub release](https://img.shields.io/github/release/devnen/Chatterbox-TTS-Server.svg)](https://github.com/devnen/Chatterbox-TTS-Server/releases/)
-[![License](https://img.shields.io/github/license/devnen/Chatterbox-TTS-Server.svg)](LICENSE)
+A Home Assistant custom component that provides Text-to-Speech functionality by connecting to a **Chatterbox TTS server**.
 
-A modern Home Assistant custom integration that provides Text-to-Speech (TTS) capabilities by connecting to your Chatterbox TTS server. This integration creates TTS entities that seamlessly integrate with Home Assistant's Voice Assistant and automation systems.
+## ⚠️ Requirements
 
-**⚠️ Important: This is a client integration only. You must first set up and run a Chatterbox TTS server before installing this integration.**
+**This integration requires a separate Chatterbox TTS server to be running.** This is a client integration that connects to an external Chatterbox server.
 
-## Architecture Overview
-
-```
-┌─────────────────┐    ┌──────────────────────┐    ┌─────────────────┐
-│ Home Assistant  │───▶│ HA Chatterbox TTS    │───▶│ Chatterbox TTS  │
-│ Voice Assistant │    │ Integration (Client) │    │ Server          │
-│ & Automations   │◀───│ (This Package)       │◀───│ (Separate Setup)│
-└─────────────────┘    └──────────────────────┘    └─────────────────┘
-```
-
-**You need both components:**
-1. **Chatterbox TTS Server** (separate installation) - Processes text and generates audio
-2. **HA Chatterbox TTS Integration** (this package) - Connects Home Assistant to your server
+- You must have a Chatterbox TTS server installed and running
+- The server must be accessible from your Home Assistant instance
+- Default server port is 8005
 
 ## Features
 
-- **28 High-Quality Voices**: Support for multiple voice personalities and styles
-- **Voice Assistant Integration**: Full compatibility with Home Assistant's Voice Assistant
-- **Modern Architecture**: Uses config flow for easy setup and management
-- **Local Processing**: Works with your local Chatterbox TTS server
-- **Automation Ready**: Perfect for notifications, announcements, and smart home responses
-- **Advanced Voice Controls**: Support for temperature, speed, and other voice parameters
+- 28 different voice options
+- Configurable TTS server connection
+- Adjustable voice parameters (temperature, exaggeration)
+- Easy configuration through Home Assistant UI
 
 ## Installation
 
-**📋 Prerequisites: Ensure your Chatterbox TTS server is running and accessible before installing this integration.**
-
-### HACS Installation (Recommended)
+### HACS (Recommended)
 
 1. Open HACS in your Home Assistant instance
 2. Go to "Integrations"
-3. Click the three dots in the top right corner
-4. Select "Custom repositories"
-5. Add this repository URL: `https://github.com/devnen/Chatterbox-TTS-Server`
-6. Select "Integration" as the category
-7. Click "Add"
-8. Find "HA Chatterbox TTS" in the integration list and install it
-9. Restart Home Assistant
+3. Click the "+" button
+4. Search for "HA Chatterbox TTS"
+5. Click "Install"
+6. Restart Home Assistant
 
 ### Manual Installation
 
-1. Download the latest release from the [releases page](https://github.com/devnen/Chatterbox-TTS-Server/releases)
-2. Extract the contents
-3. Copy the `custom_components/ha_chatterbox` folder to your Home Assistant `custom_components` directory
-4. Restart Home Assistant
-
-## Prerequisites
-
-**🔧 Required: Chatterbox TTS Server**
-
-This integration requires a separate Chatterbox TTS server to function. You must set up and run the server first.
-
-**Server Setup**: [Chatterbox TTS Server Repository](https://github.com/devnen/Chatterbox-TTS-Server)
-
-Once your server is running and accessible, proceed with installing this integration.
+1. Download the `ha_chatterbox2` folder
+2. Copy it to your `custom_components` directory
+3. Restart Home Assistant
 
 ## Configuration
 
-### Adding the Integration
+### Prerequisites
 
-1. Go to **Settings** → **Devices & Services** in Home Assistant
+Before configuring this integration, ensure you have:
+
+1. **Chatterbox TTS Server**: Install and run a Chatterbox TTS server
+2. **Network Access**: Home Assistant can reach the server (test with `ping` or browser)
+3. **Server Port**: Note the port your Chatterbox server is running on (default: 8005)
+
+### Step 1: Add Integration
+
+1. Go to **Settings** → **Devices & Services**
 2. Click **"+ Add Integration"**
-3. Search for **"HA Chatterbox TTS"**
-4. Enter your Chatterbox TTS server details:
-   - **Host**: IP address of your Chatterbox server (e.g., `192.168.1.100`)
-   - **Port**: Port number (default: `8005`)
-5. Click **Submit**
+3. Search for **"HA Chatterbox TTS Client"**
+4. Configure your **existing** Chatterbox server settings:
+   - **Host**: IP address where your Chatterbox server is running
+   - **Port**: Port number your server uses (default: 8005)
+   - **Voice**: Select from voices available on your server
 
-The integration will automatically test the connection and set up the TTS entity.
+### Step 2: Enable TTS Platform
 
-### Voice Assistant Configuration
+Add the following to your `configuration.yaml`:
 
-Once installed, HA Chatterbox TTS will appear as an option in your Voice Assistant configuration:
+```yaml
+tts:
+  - platform: ha_chatterbox2
+```
 
-1. Go to **Settings** → **Voice assistants**
-2. Select your voice assistant
-3. In the **Text-to-speech** dropdown, select **"ha_chatterbox"**
-4. Choose your preferred voice from the available options
+Then restart Home Assistant.
 
 ## Available Voices
 
-The integration supports 28 different voices, including:
+The integration includes 28 high-quality voices:
 
-- **Emily** - Natural female voice
-- **Marcus** - Professional male voice
-- **Sarah** - Warm female voice
-- **David** - Clear male voice
-- **Luna** - Soft female voice
-- **Oliver** - Friendly male voice
-- And many more...
+- Alice, Amy, Andrew, Ava, Ben
+- Brian, Clara, David, Emily, Emma
+- George, Hannah, Jack, James, Jessica
+- John, Kate, Kevin, Liam, Linda
+- Mark, Mary, Michael, Paul, Rachel
+- Robert, Sarah, Thomas
 
-Each voice has unique characteristics suitable for different use cases and preferences.
+## Configuration Options
+
+- **Host**: Chatterbox server IP address
+- **Port**: Server port (default: 8005)
+- **Voice**: Choose from available voices
+- **Temperature**: Voice variation (0.0-1.0)
+- **Exaggeration**: Voice emphasis (0.0-2.0)
 
 ## Usage
 
-### In Automations
+Once configured, the TTS service will be available in:
+
+- **Voice Assistants**: Select "HA Chatterbox TTS" as your voice assistant's TTS engine
+- **Automations**: Use the `tts.ha_chatterbox2_say` service
+- **Scripts**: Call TTS service with custom messages
+
+### Example Automation
 
 ```yaml
-service: tts.speak
-target:
-  entity_id: tts.ha_chatterbox
-data:
-  message: "Hello! Your automation has been triggered."
-  options:
-    voice: Emily
-    temperature: 0.8
-    speed_factor: 1.0
-```
-
-### In Scripts
-
-```yaml
-announce_status:
-  sequence:
-    - service: tts.speak
-      target:
-        entity_id: tts.ha_chatterbox
+automation:
+  - alias: "Welcome Home"
+    trigger:
+      platform: state
+      entity_id: person.your_name
+      to: "home"
+    action:
+      service: tts.ha_chatterbox2_say
       data:
-        message: "Good morning! All systems are operational."
-        media_player_entity_id: media_player.living_room_speaker
-        options:
-          voice: Marcus
-          temperature: 0.7
-```
-
-### Voice Assistant Integration
-
-When configured with Voice Assistant, the integration automatically handles TTS requests with your selected voice and settings.
-
-## Advanced Configuration
-
-### Voice Parameters
-
-- **voice**: Select from 28 available voices
-- **temperature**: Controls voice variation (0.0-1.0, default: 0.8)
-- **speed_factor**: Adjusts speaking speed (0.5-2.0, default: 1.0)
-- **exaggeration**: Voice expressiveness (0.0-2.0, default: 1.0)
-- **cfg_weight**: Configuration weight (0.0-1.0, default: 0.5)
-- **seed**: Random seed for reproducible output (default: 0)
-
-### Example with All Parameters
-
-```yaml
-service: tts.speak
-target:
-  entity_id: tts.ha_chatterbox
-data:
-  message: "This is a test with custom voice parameters."
-  options:
-    voice: Luna
-    temperature: 0.9
-    speed_factor: 1.2
-    exaggeration: 1.1
-    cfg_weight: 0.6
-    seed: 42
+        entity_id: media_player.living_room
+        message: "Welcome home!"
 ```
 
 ## Troubleshooting
 
-### Integration Not Loading
+### No Chatterbox Server
 
-1. **Check server first**: Ensure the Chatterbox TTS server is running and accessible
-2. **Test server directly**: Use `curl http://YOUR_SERVER_IP:8005/health` to verify server response
-3. Verify the host and port configuration in the integration setup
-4. Check Home Assistant logs for connection errors
-5. Ensure firewall allows communication between Home Assistant and the server
-6. **Server location**: Make sure the server IP is accessible from your Home Assistant instance
+**Error**: "Connection refused" or "Unable to connect"
 
-### Voice Assistant Shows Empty Options
+**Solution**: 
+- Install and start your Chatterbox TTS server first
+- Verify the server is running on the configured host/port
+- Test connectivity: `curl http://YOUR_SERVER_IP:8005/health` (if available)
 
-1. Restart Home Assistant after installation
-2. Check that the integration loaded successfully in **Settings** → **Devices & Services**
-3. Verify the TTS entity is created and available
-4. Re-configure your Voice Assistant settings
+### TTS Not Available in Voice Assistant
 
-### Audio Not Playing
+Make sure you have added the platform to `configuration.yaml`:
 
-1. **Check server status**: Verify the Chatterbox TTS server is generating audio files correctly
-2. **Test server directly**: Try generating audio via server API to confirm it's working
-3. Ensure your media player supports the audio format (WAV/MP3)
-4. Verify network connectivity between all components (HA ↔ Server ↔ Media Player)
-5. Test with a simple automation first
-6. **Server resources**: Ensure the server has sufficient RAM and isn't overloaded
+```yaml
+tts:
+  - platform: ha_chatterbox2
+```
 
-### Common Log Messages
+### Connection Issues
 
-- `"HA Chatterbox TTS server not responding"`: Server connection issue
-- `"Failed to connect to HA Chatterbox TTS server"`: Network or server problem
-- `"Voice 'X' not available"`: Invalid voice name in configuration
+**This integration is a client only** - it requires a separate Chatterbox server:
+
+- **Install Chatterbox Server**: Set up the server software separately
+- **Verify Server Status**: Ensure your Chatterbox server is running and accessible
+- **Check Network**: Confirm Home Assistant can reach the server IP/port
+- **Firewall**: Ensure the server port (default 8005) is not blocked
+
+### Voice Not Working
+
+- Confirm the selected voice is available on your server
+- Try a different voice from the dropdown
+- Check Home Assistant logs for error messages
 
 ## Support
 
-- **Server Setup Help**: [Chatterbox TTS Server Documentation](https://github.com/devnen/Chatterbox-TTS-Server)
-- **Integration Issues**: [GitHub Issues](https://github.com/devnen/Chatterbox-TTS-Server/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/devnen/Chatterbox-TTS-Server/discussions)
-- **Documentation**: [Project Wiki](https://github.com/devnen/Chatterbox-TTS-Server/wiki)
-
-## Contributing
-
-Contributions are welcome! Please read our contributing guidelines and submit pull requests for any improvements.
+For issues and feature requests, please visit the [GitHub repository](https://github.com/Jacid23/HA_Chatterbox).
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Changelog
-
-### Version 2.0.0
-- Complete rewrite using modern Home Assistant architecture
-- Added config flow support for easy setup
-- Implemented proper TTS entity structure
-- Enhanced Voice Assistant integration
-- Added 28 voice options
-- Improved error handling and logging
-- Added advanced voice parameter controls
-
-### Version 1.x
-- Initial release with basic TTS functionality
-- Legacy configuration method
-
-## Credits
-
-- **Home Assistant Integration** by [@devnen](https://github.com/devnen)
-- **Chatterbox TTS Server** - Separate server component required for operation
-- Built for the Home Assistant community
+This project is licensed under the MIT License.
