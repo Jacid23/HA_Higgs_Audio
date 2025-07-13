@@ -1,0 +1,26 @@
+# Chatterbox TTS Text Inputs for Home Assistant
+# Add to input_text.yaml or include in configuration.yaml
+
+ha_chatterbox_says:
+  name: "Chatterbox Says"
+  max: 500
+  initial: ""
+  icon: mdi:microphone
+
+ha_chatterbox_last_phrase:
+  name: "Chatterbox Last Phrase"
+  max: 500
+  initial: ""
+  icon: mdi:message-text
+
+ha_chatterbox_text:
+  name: "Text for Voice File"
+  max: 500
+  initial: ""
+  icon: mdi:text
+
+ha_chatterbox_filename:
+  name: "Voice File Name"
+  max: 50
+  initial: "my_voice_file"
+  icon: mdi:file-music

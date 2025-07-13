@@ -1,0 +1,45 @@
+# HA Chatterbox TTS Input Number Sliders for Home Assistant
+# Slider controls for voice generation parameters
+
+ha_chatterbox_temperature:
+  name: "Voice Temperature"
+  min: 0.0
+  max: 1.0
+  step: 0.1
+  initial: 0.8
+  icon: mdi:thermometer
+  unit_of_measurement: ""
+
+ha_chatterbox_speed:
+  name: "Speech Speed"
+  min: 0.5
+  max: 2.0
+  step: 0.1
+  initial: 1.0
+  icon: mdi:speedometer
+  unit_of_measurement: "x"
+
+ha_chatterbox_exaggeration:
+  name: "Voice Exaggeration"
+  min: 0.5
+  max: 2.0
+  step: 0.1
+  initial: 1.0
+  icon: mdi:theater
+  unit_of_measurement: ""
+
+ha_chatterbox_cfg:
+  name: "CFG Weight"
+  min: 0.1
+  max: 1.0
+  step: 0.1
+  initial: 0.5
+  icon: mdi:tune-vertical
+  unit_of_measurement: ""
+
+ha_chatterbox_seed:
+  name: "Seed"
+  min: 0
+  max: 9999
+  step: 1
+  mode: "slider box"
