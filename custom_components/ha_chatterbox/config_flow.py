@@ -24,7 +24,7 @@ from .const import (
 
 _LOGGER = logging.getLogger(__name__)
 
-class ChatterboxTTSFlowHandler(config_entries.ConfigFlow):
+class HaChatterboxConfigFlow(config_entries.ConfigFlow):
     """Handle a config flow for HA Chatterbox TTS."""
 
     VERSION = 1
@@ -34,11 +34,6 @@ class ChatterboxTTSFlowHandler(config_entries.ConfigFlow):
         """Initialize the config flow."""
         self._host = None
         self._port = None
-
-    @property
-    def domain(self):
-        """Return the domain."""
-        return DOMAIN
 
     async def async_step_user(self, user_input=None):
         """Handle the initial step."""
@@ -116,10 +111,10 @@ class ChatterboxTTSFlowHandler(config_entries.ConfigFlow):
     @callback
     def async_get_options_flow(config_entry):
         """Get the options flow for this handler."""
-        return ChatterboxTTSOptionsFlowHandler(config_entry)
+        return HaChatterboxOptionsFlowHandler(config_entry)
 
 
-class ChatterboxTTSOptionsFlowHandler(config_entries.OptionsFlow):
+class HaChatterboxOptionsFlowHandler(config_entries.OptionsFlow):
     """Handle options for HA Chatterbox TTS."""
 
     def __init__(self, config_entry):
