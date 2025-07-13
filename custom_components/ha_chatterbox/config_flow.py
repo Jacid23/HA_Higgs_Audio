@@ -3,6 +3,8 @@ import logging
 import asyncio
 import voluptuous as vol
 import requests
+import json
+import os
 
 from homeassistant import config_entries
 from homeassistant.core import callback
@@ -24,11 +26,40 @@ from .const import (
 
 _LOGGER = logging.getLogger(__name__)
 
+def _load_voices_from_strings():
+    """Load voice options from strings.json file."""
+    try:
+        # Get the directory where this file is located
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        strings_path = os.path.join(current_dir, "strings.json")
+        
+        if os.path.exists(strings_path):
+            with open(strings_path, 'r', encoding='utf-8') as f:
+                strings_data = json.load(f)
+                # Extract voice options from the voices section
+                voices = strings_data.get("voices", {})
+                if voices:
+                    # Return list of voice IDs (keys)
+                    voice_list = list(voices.keys())
+                    _LOGGER.debug("Config flow loaded %d voices from strings.json: %s", len(voice_list), voice_list)
+                    return voice_list
+    except Exception as ex:
+        _LOGGER.warning("Config flow could not load voices from strings.json: %s", ex)
+    
+    # Fallback to const.py voices
+    _LOGGER.debug("Config flow using fallback voices from const.py")
+    return AVAILABLE_VOICES
+
 class HaChatterboxConfigFlow(config_entries.ConfigFlow):
     """Handle a config flow for HA Chatterbox TTS."""
 
     VERSION = 1
     CONNECTION_CLASS = config_entries.CONN_CLASS_LOCAL_PUSH
+    
+    @property
+    def domain(self):
+        """Return the domain."""
+        return DOMAIN
 
     def __init__(self):
         """Initialize the config flow."""
@@ -72,6 +103,7 @@ class HaChatterboxConfigFlow(config_entries.ConfigFlow):
                 errors["base"] = "cannot_connect"
 
         # Show form with voice dropdown
+        available_voices = _load_voices_from_strings()
         return self.async_show_form(
             step_id="user",
             data_schema=vol.Schema(
@@ -79,7 +111,7 @@ class HaChatterboxConfigFlow(config_entries.ConfigFlow):
                     vol.Required(CONF_HOST, default=DEFAULT_HOST): str,
                     vol.Required(CONF_PORT, default=DEFAULT_PORT): vol.Coerce(int),
                     vol.Optional(CONF_NAME, default="HA Chatterbox TTS"): str,
-                    vol.Optional(CONF_VOICE, default=DEFAULT_VOICE): vol.In(AVAILABLE_VOICES),
+                    vol.Optional(CONF_VOICE, default=DEFAULT_VOICE): vol.In(available_voices),
                     vol.Optional(CONF_TEMPERATURE, default=DEFAULT_TEMPERATURE): vol.All(
                         vol.Coerce(float), vol.Range(min=0.0, max=1.0)
                     ),
@@ -142,11 +174,12 @@ class HaChatterboxOptionsFlowHandler(config_entries.OptionsFlow):
             CONF_SPEED_FACTOR, DEFAULT_SPEED_FACTOR
         )
 
+        available_voices = _load_voices_from_strings()
         return self.async_show_form(
             step_id="tts_options",
             data_schema=vol.Schema(
                 {
-                    vol.Optional(CONF_VOICE, default=current_voice): vol.In(AVAILABLE_VOICES),
+                    vol.Optional(CONF_VOICE, default=current_voice): vol.In(available_voices),
                     vol.Optional(CONF_TEMPERATURE, default=current_temperature): vol.All(
                         vol.Coerce(float), vol.Range(min=0.0, max=1.0)
                     ),

@@ -1,15 +1,7 @@
 """
-HA Chatterbox TTS Platform for Home Assistant    # Create the TTS entity
-    entity = HAChatterboxTTSEntity(
-        hass=hass,
-        entry=entry,
-        host=data["host"],
-        port=data["port"],
-        base_url=data["base_url"]
-    )
-    
-    async_add_entities([entity], True)
-    _LOGGER.debug("Added HA Chatterbox TTS entity: %s", entity.unique_id)s Text-to-Speech services using Chatterbox TTS server.
+Chatterbox HA TTS Platform for Home Assistant
+
+Provides Text-to-Speech services using Chatterbox TTS server.
 """
 import logging
 import requests
@@ -50,14 +42,14 @@ CONF_OPTIONS = "options"
 async def async_setup_entry(
     hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
 ) -> None:
-    """Set up HA Chatterbox TTS from a config entry."""
-    _LOGGER.debug("Setting up HA Chatterbox TTS entity from config entry")
+    """Set up Chatterbox HA TTS from a config entry."""
+    _LOGGER.debug("Setting up Chatterbox HA TTS entity from config entry")
     
     # Get the stored configuration from the integration
     data = hass.data[DOMAIN][entry.entry_id]
     
     # Create the TTS entity
-    entity = HAChatterboxTTSEntity(
+    entity = ChatterboxHATTSEntity(
         hass=hass,
         entry=entry,
         host=data["host"],
@@ -66,7 +58,7 @@ async def async_setup_entry(
     )
     
     async_add_entities([entity], True)
-    _LOGGER.debug("Added HA Chatterbox TTS entity: %s", entity.unique_id)
+    _LOGGER.debug("Added Chatterbox HA TTS entity: %s", entity.unique_id)
 
 def _load_voices_from_strings():
     """Load voice options from strings.json file."""
@@ -90,11 +82,11 @@ def _load_voices_from_strings():
     
     return None
 
-class HAChatterboxTTSEntity(TextToSpeechEntity):
-    """HA Chatterbox TTS Entity."""
+class ChatterboxHATTSEntity(TextToSpeechEntity):
+    """Chatterbox HA TTS Entity."""
 
     def __init__(self, hass: HomeAssistant, entry: ConfigEntry, host: str, port: int, base_url: str):
-        """Initialize HA Chatterbox TTS entity."""
+        """Initialize Chatterbox HA TTS entity."""
         self.hass = hass
         self._entry = entry
         self._host = host
@@ -110,17 +102,17 @@ class HAChatterboxTTSEntity(TextToSpeechEntity):
         self._seed = entry.data.get(CONF_SEED, DEFAULT_SEED)
         self._speed_factor = entry.data.get(CONF_SPEED_FACTOR, DEFAULT_SPEED_FACTOR)
         
-        _LOGGER.debug("HA Chatterbox TTS entity initialized, base_url: %s", self._base_url)
+        _LOGGER.debug("Chatterbox HA TTS entity initialized, base_url: %s", self._base_url)
 
     @property
     def unique_id(self) -> str:
         """Return unique ID for the entity."""
-        return f"ha_chatterbox_tts_{self._host}_{self._port}"
+        return f"chatterbox_ha_tts_{self._host}_{self._port}"
 
     @property
     def name(self) -> str:
         """Return the name of the entity."""
-        return "HA Chatterbox"
+        return "Chatterbox HA TTS"
 
     @property
     def available(self) -> bool:
@@ -149,7 +141,7 @@ class HAChatterboxTTSEntity(TextToSpeechEntity):
         if voices:
             default_voice = voices[0]
         else:
-            default_voice = DEFAULT_VOICE
+            default_voice = self._voice
             
         defaults = {
             CONF_VOICE: default_voice,
@@ -168,7 +160,7 @@ class HAChatterboxTTSEntity(TextToSpeechEntity):
         voices = _load_voices_from_strings()
         if voices:
             return voices[0]
-        return DEFAULT_VOICE
+        return self._voice
 
     @property
     def supported_voices(self) -> dict[str, list[str]]:
@@ -177,7 +169,7 @@ class HAChatterboxTTSEntity(TextToSpeechEntity):
         voices = _load_voices_from_strings()
         if voices:
             result = {"en-US": voices}
-            _LOGGER.debug("HA Chatterbox supported_voices: %s", result)
+            _LOGGER.debug("Chatterbox HA TTS supported_voices: %s", result)
             return result
         
         _LOGGER.warning("No voices found in strings.json")
@@ -194,7 +186,7 @@ class HAChatterboxTTSEntity(TextToSpeechEntity):
         return voice_name
 
     async def async_get_tts_audio(self, message: str, language: str, options: dict | None = None) -> TtsAudioType:
-        """Load TTS from HA Chatterbox TTS server."""
+        """Load TTS from Chatterbox HA TTS server."""
         _LOGGER.debug("async_get_tts_audio called with message: %s, language: %s, options: %s", message, language, options)
         
         if options is None:
@@ -229,7 +221,7 @@ class HAChatterboxTTSEntity(TextToSpeechEntity):
         _LOGGER.debug("Sending request to %s with data: %s", f"{self._base_url}/tts", data)
         
         try:
-            # Send request to HA Chatterbox TTS server
+            # Send request to Chatterbox HA TTS server
             url = f"{self._base_url}/tts"
             response = await self.hass.async_add_executor_job(
                 functools.partial(
@@ -242,12 +234,12 @@ class HAChatterboxTTSEntity(TextToSpeechEntity):
             )
             
             if response.status_code == 200:
-                _LOGGER.debug("HA Chatterbox TTS request successful")
+                _LOGGER.debug("Chatterbox HA TTS request successful")
                 return "wav", response.content
             else:
-                _LOGGER.error("HA Chatterbox TTS request failed: %s", response.status_code)
+                _LOGGER.error("Chatterbox HA TTS request failed: %s", response.status_code)
                 return "wav", b""
                 
         except Exception as ex:
-            _LOGGER.error("Error connecting to HA Chatterbox TTS: %s", ex)
+            _LOGGER.error("Error connecting to Chatterbox HA TTS: %s", ex)
             return "wav", b""
