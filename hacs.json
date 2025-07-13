@@ -5,7 +5,7 @@
   "country": ["US", "GB", "CA", "AU"],
   "homeassistant": "2023.1.0",
   "render_readme": true,
-  "zip_release": false,
+  "zip_release": true,
   "hide_default_branch": false,
   "domains": ["ha_chatterbox", "tts"]
 }
