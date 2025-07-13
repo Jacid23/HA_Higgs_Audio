@@ -156,7 +156,7 @@ def async_setup_services(hass: HomeAssistant) -> None:
         voice = call.data.get(ATTR_VOICE)
         
         # Update input_select if it exists
-        input_select_entity = "input_select.chatterbox_voice"
+        input_select_entity = "input_select.ha_chatterbox_voice"
         if hass.states.get(input_select_entity):
             await hass.services.async_call(
                 "input_select",

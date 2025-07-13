@@ -50,16 +50,11 @@ def _load_voices_from_strings():
     _LOGGER.debug("Config flow using fallback voices from const.py")
     return AVAILABLE_VOICES
 
-class HaChatterboxConfigFlow(config_entries.ConfigFlow):
+class ConfigFlow(config_entries.ConfigFlow):
     """Handle a config flow for HA Chatterbox TTS."""
 
     VERSION = 1
-    CONNECTION_CLASS = config_entries.CONN_CLASS_LOCAL_PUSH
-    
-    @property
-    def domain(self):
-        """Return the domain."""
-        return DOMAIN
+    domain = DOMAIN
 
     def __init__(self):
         """Initialize the config flow."""
@@ -143,10 +138,10 @@ class HaChatterboxConfigFlow(config_entries.ConfigFlow):
     @callback
     def async_get_options_flow(config_entry):
         """Get the options flow for this handler."""
-        return HaChatterboxOptionsFlowHandler(config_entry)
+        return OptionsFlowHandler(config_entry)
 
 
-class HaChatterboxOptionsFlowHandler(config_entries.OptionsFlow):
+class OptionsFlowHandler(config_entries.OptionsFlow):
     """Handle options for HA Chatterbox TTS."""
 
     def __init__(self, config_entry):
