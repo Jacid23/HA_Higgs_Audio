@@ -1,11 +1,9 @@
 {
   "name": "HA Chatterbox TTS",
-  "content_in_root": false,
+  "documentation": "https://github.com/devnen/Chatterbox-TTS-Server/blob/main/README.md",
+  "issue_tracker": "https://github.com/devnen/Chatterbox-TTS-Server/issues",
   "filename": "ha_chatterbox",
-  "country": ["US", "GB", "CA", "AU"],
-  "homeassistant": "2023.1.0",
+  "homeassistant": "2025.1.0",
   "render_readme": true,
-  "zip_release": true,
-  "hide_default_branch": false,
-  "domains": ["ha_chatterbox", "tts"]
+  "domains": ["ha_chatterbox", "tts"],
 }

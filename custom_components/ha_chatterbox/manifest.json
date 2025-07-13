@@ -8,7 +8,7 @@
   "codeowners": ["@devnen"],
   "requirements": ["requests>=2.25.0"],
   "config_flow": true,
-  "integration_type": "hub",
+  "integration_type": "cloud_polling",
   "iot_class": "local_push",
   "platforms": ["tts"]
 }
