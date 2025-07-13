@@ -1,7 +1,7 @@
 """
-Chatterbox HA TTS Platform for Home Assistant
+Chatterbox HA TTS Provider Platform for Home Assistant (Provider API)
 
-Provides Text-to-Speech services using Chatterbox TTS server.
+Provides Text-to-Speech services using Chatterbox TTS server, with selectable voices/options.
 """
 import logging
 import requests
@@ -9,12 +9,7 @@ import json
 import os
 import functools
 
-from homeassistant.components.tts import TextToSpeechEntity, TtsAudioType
-from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant
-from homeassistant.const import CONF_HOST, CONF_PORT
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
-
+from homeassistant.components.tts import Provider
 from .const import (
     DOMAIN,
     DEFAULT_HOST,
@@ -30,183 +25,105 @@ from .const import (
     CONF_EXAGGERATION,
     CONF_CFG_WEIGHT,
     CONF_SEED,
-    CONF_SPEED_FACTOR
+    CONF_SPEED_FACTOR,
 )
 
 _LOGGER = logging.getLogger(__name__)
 
-# Configuration constants
-CONF_LANGUAGE = "language"
-CONF_OPTIONS = "options"
+# Util: Load voices from strings.json, fallback to const.py AVAILABLE_VOICES
+_DEF_VOICES = None
 
-async def async_setup_entry(
-    hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
-) -> None:
-    """Set up Chatterbox HA TTS from a config entry."""
-    _LOGGER.debug("Setting up Chatterbox HA TTS entity from config entry")
-    
-    # Get the stored configuration from the integration
-    data = hass.data[DOMAIN][entry.entry_id]
-    
-    # Create the TTS entity
-    entity = ChatterboxHATTSEntity(
-        hass=hass,
-        entry=entry,
-        host=data["host"],
-        port=data["port"],
-        base_url=data["base_url"]
-    )
-    
-    async_add_entities([entity], True)
-    _LOGGER.debug("Added Chatterbox HA TTS entity: %s", entity.unique_id)
-
-def _load_voices_from_strings():
-    """Load voice options from strings.json file."""
+def _load_voices():
+    global _DEF_VOICES
+    if _DEF_VOICES is not None:
+        return _DEF_VOICES
     try:
-        # Get the directory where this file is located
         current_dir = os.path.dirname(os.path.abspath(__file__))
         strings_path = os.path.join(current_dir, "strings.json")
-        
         if os.path.exists(strings_path):
             with open(strings_path, 'r', encoding='utf-8') as f:
-                strings_data = json.load(f)
-                # Extract voice options from the voices section
-                voices = strings_data.get("voices", {})
+                voices = json.load(f).get("voices", {})
                 if voices:
-                    # Return list of voice IDs (keys)
-                    voice_list = list(voices.keys())
-                    _LOGGER.debug("Loaded %d voices from strings.json: %s", len(voice_list), voice_list)
-                    return voice_list
+                    _DEF_VOICES = list(voices.keys())
+                    return _DEF_VOICES
     except Exception as ex:
         _LOGGER.warning("Could not load voices from strings.json: %s", ex)
-    
-    return None
+    # fallback
+    try:
+        from .const import AVAILABLE_VOICES
+        _DEF_VOICES = AVAILABLE_VOICES
+        return _DEF_VOICES
+    except Exception:
+        _DEF_VOICES = [DEFAULT_VOICE]
+        return _DEF_VOICES
 
-class ChatterboxHATTSEntity(TextToSpeechEntity):
-    """Chatterbox HA TTS Entity."""
-
-    def __init__(self, hass: HomeAssistant, entry: ConfigEntry, host: str, port: int, base_url: str):
-        """Initialize Chatterbox HA TTS entity."""
+class ChatterboxTTSProvider(Provider):
+    def __init__(self, hass, host, port, base_url, config_entry):
         self.hass = hass
-        self._entry = entry
         self._host = host
         self._port = port
         self._base_url = base_url
-        
-        # Get configuration from entry data
-        self._language = entry.data.get(CONF_LANGUAGE, "en-US")
-        self._voice = entry.data.get(CONF_VOICE, DEFAULT_VOICE)
-        self._temperature = entry.data.get(CONF_TEMPERATURE, DEFAULT_TEMPERATURE)
-        self._exaggeration = entry.data.get(CONF_EXAGGERATION, DEFAULT_EXAGGERATION)
-        self._cfg_weight = entry.data.get(CONF_CFG_WEIGHT, DEFAULT_CFG_WEIGHT)
-        self._seed = entry.data.get(CONF_SEED, DEFAULT_SEED)
-        self._speed_factor = entry.data.get(CONF_SPEED_FACTOR, DEFAULT_SPEED_FACTOR)
-        
-        _LOGGER.debug("Chatterbox HA TTS entity initialized, base_url: %s", self._base_url)
+        self._config_entry = config_entry
+
+        opts = (config_entry.options if config_entry else {})
+        data = (config_entry.data if config_entry else {})
+        self._language = data.get("language", "en-US")
+        self._voice = opts.get(CONF_VOICE, data.get(CONF_VOICE, DEFAULT_VOICE))
+        self._temperature = opts.get(CONF_TEMPERATURE, data.get(CONF_TEMPERATURE, DEFAULT_TEMPERATURE))
+        self._exaggeration = opts.get(CONF_EXAGGERATION, data.get(CONF_EXAGGERATION, DEFAULT_EXAGGERATION))
+        self._cfg_weight = opts.get(CONF_CFG_WEIGHT, data.get(CONF_CFG_WEIGHT, DEFAULT_CFG_WEIGHT))
+        self._seed = opts.get(CONF_SEED, data.get(CONF_SEED, DEFAULT_SEED))
+        self._speed_factor = opts.get(CONF_SPEED_FACTOR, data.get(CONF_SPEED_FACTOR, DEFAULT_SPEED_FACTOR))
 
     @property
-    def unique_id(self) -> str:
-        """Return unique ID for the entity."""
-        return f"chatterbox_ha_tts_{self._host}_{self._port}"
-
-    @property
-    def name(self) -> str:
-        """Return the name of the entity."""
-        return "Chatterbox HA TTS"
-
-    @property
-    def available(self) -> bool:
-        """Return True if entity is available."""
-        return True
-
-    @property
-    def default_language(self) -> str:
-        """Return the default language."""
+    def default_language(self):
         return "en-US"
 
     @property
-    def supported_languages(self) -> list[str]:
-        """Return list of supported languages."""
+    def supported_languages(self):
         return ["en-US"]
 
     @property
-    def supported_options(self) -> list[str]:
-        """Return list of supported options."""
+    def supported_options(self):
         return [CONF_VOICE, CONF_TEMPERATURE, CONF_EXAGGERATION, CONF_CFG_WEIGHT, CONF_SEED, CONF_SPEED_FACTOR]
 
     @property
-    def default_options(self) -> dict[str, str | int | float]:
-        """Return default options."""
-        voices = _load_voices_from_strings()
-        if voices:
-            default_voice = voices[0]
-        else:
-            default_voice = self._voice
-            
-        defaults = {
-            CONF_VOICE: default_voice,
+    def default_options(self):
+        voices = _load_voices()
+        return {
+            CONF_VOICE: voices[0] if voices else DEFAULT_VOICE,
             CONF_TEMPERATURE: self._temperature,
             CONF_EXAGGERATION: self._exaggeration,
             CONF_CFG_WEIGHT: self._cfg_weight,
             CONF_SEED: self._seed,
-            CONF_SPEED_FACTOR: self._speed_factor
+            CONF_SPEED_FACTOR: self._speed_factor,
         }
-        _LOGGER.debug("Entity default_options: %s", defaults)
-        return defaults
 
     @property
-    def default_voice(self) -> str:
-        """Return the default voice."""
-        voices = _load_voices_from_strings()
-        if voices:
-            return voices[0]
-        return self._voice
+    def supported_voices(self):
+        voices = _load_voices()
+        return {"en-US": voices}
 
     @property
-    def supported_voices(self) -> dict[str, list[str]]:
-        """Return list of supported voices in the expected format."""
-        # Load voices from strings.json file
-        voices = _load_voices_from_strings()
-        if voices:
-            result = {"en-US": voices}
-            _LOGGER.debug("Chatterbox HA TTS supported_voices: %s", result)
-            return result
-        
-        _LOGGER.warning("No voices found in strings.json")
-        return {"en-US": []}
-    
-    def _get_voice_filename(self, voice_name: str) -> str | None:
-        """Convert voice display name to filename."""
-        if not voice_name:
+    def default_voice(self):
+        voices = _load_voices()
+        return voices[0] if voices else DEFAULT_VOICE
+
+    def _get_voice_filename(self, name: str):
+        if not name:
             return None
-        
-        # For strings.json voices, add .wav extension if not present
-        if not voice_name.endswith('.wav'):
-            return f"{voice_name}.wav"
-        return voice_name
+        return name if name.endswith('.wav') else f"{name}.wav"
 
-    async def async_get_tts_audio(self, message: str, language: str, options: dict | None = None) -> TtsAudioType:
-        """Load TTS from Chatterbox HA TTS server."""
-        _LOGGER.debug("async_get_tts_audio called with message: %s, language: %s, options: %s", message, language, options)
-        
-        if options is None:
-            options = {}
-        
-        # Get voice and parameters
+    async def async_get_tts_audio(self, message, language, options=None):
+        options = options or {}
         selected_voice = options.get(CONF_VOICE, self._voice)
         temperature = options.get(CONF_TEMPERATURE, self._temperature)
         exaggeration = options.get(CONF_EXAGGERATION, self._exaggeration)
         cfg_weight = options.get(CONF_CFG_WEIGHT, self._cfg_weight)
         seed = options.get(CONF_SEED, self._seed)
         speed_factor = options.get(CONF_SPEED_FACTOR, self._speed_factor)
-        
-        # Convert voice display name to filename
         voice_filename = self._get_voice_filename(selected_voice)
-        
-        _LOGGER.debug("TTS request - Voice: %s (filename: %s), Temp: %s, Speed: %s", 
-                     selected_voice, voice_filename, temperature, speed_factor)
-        
-        # Prepare request data
+
         data = {
             "text": message,
             "predefined_voice_id": voice_filename,
@@ -215,13 +132,12 @@ class ChatterboxHATTSEntity(TextToSpeechEntity):
             "cfg_weight": cfg_weight,
             "seed": seed,
             "speed_factor": speed_factor,
-            "output_format": "wav"
+            "output_format": "wav",
         }
-        
-        _LOGGER.debug("Sending request to %s with data: %s", f"{self._base_url}/tts", data)
-        
+
+        _LOGGER.debug("ChatterboxTTSProvider TTS request: %s", data)
+
         try:
-            # Send request to Chatterbox HA TTS server
             url = f"{self._base_url}/tts"
             response = await self.hass.async_add_executor_job(
                 functools.partial(
@@ -232,14 +148,30 @@ class ChatterboxHATTSEntity(TextToSpeechEntity):
                     timeout=30
                 )
             )
-            
             if response.status_code == 200:
-                _LOGGER.debug("Chatterbox HA TTS request successful")
-                return "wav", response.content
+                return ("wav", response.content)
             else:
-                _LOGGER.error("Chatterbox HA TTS request failed: %s", response.status_code)
-                return "wav", b""
-                
+                _LOGGER.error("Chatterbox TTS request failed: %s %s", response.status_code, response.text)
+                return ("wav", b"")
         except Exception as ex:
-            _LOGGER.error("Error connecting to Chatterbox HA TTS: %s", ex)
-            return "wav", b""
+            _LOGGER.error("Error connecting to Chatterbox TTS: %s", ex)
+            return ("wav", b"")
+
+# PLATFORM REGISTRATION
+async def async_get_engine(hass, config, discovery_info=None):
+    """Set up the TTS provider for HA."""
+    # Find config entry
+    entry_id = None
+    for eid, e in getattr(hass.data.get(DOMAIN, {}), "items", lambda: [])():
+        entry_id = eid
+        entry = e
+        break
+    if entry_id is None:
+        raise RuntimeError("No config entry found for Chatterbox HA TTS!")
+    return ChatterboxTTSProvider(
+        hass=hass,
+        host=entry["host"],
+        port=entry["port"],
+        base_url=entry["base_url"],
+        config_entry=getattr(hass.config_entries, "async_get_entry", lambda eid: None)(entry_id),
+    )
