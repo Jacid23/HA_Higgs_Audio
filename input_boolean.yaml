@@ -1,17 +1,17 @@
-# Chatterbox TTS Boolean Inputs for Home Assistant
+# Higgs Audio TTS Boolean Inputs for Home Assistant
 # Add to input_boolean.yaml or include in configuration.yaml
 
-ha_chatterbox_enabled:
-  name: "HA Chatterbox TTS Enabled"
+ha_higgs_audio_enabled:
+  name: "HA Higgs Audio TTS Enabled"
   initial: true
   icon: mdi:account-voice
-  
-ha_chatterbox_auto_announce:
-  name: "HA Chatterbox Auto Announcements"
+
+ha_higgs_audio_auto_announce:
+  name: "HA Higgs Audio Auto Announcements"
   initial: false
   icon: mdi:bullhorn
 
-ha_chatterbox_use_input_selects:
+ha_higgs_audio_use_input_selects:
   name: "Use Input Select Controls"
   initial: true
   icon: mdi:tune-variant

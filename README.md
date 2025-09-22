@@ -1,12 +1,12 @@
-# HA Chatterbox TTS Client Integration
+# HA Higgs Audio TTS Client Integration
 
-A Home Assistant custom component that provides Text-to-Speech functionality by connecting to a **Chatterbox TTS server**.
+A Home Assistant custom component that provides Text-to-Speech functionality by connecting to a **Higgs Audio TTS server**.
 
 ## ⚠️ Requirements
 
-**This integration requires a separate Chatterbox TTS server to be running.** This is a client integration that connects to an external Chatterbox server.
+**This integration requires a separate Higgs Audio TTS server to be running.** This is a client integration that connects to an external Higgs Audio server.
 
-- You must have a Chatterbox TTS server installed and running
+- You must have a Higgs Audio TTS server installed and running
 - The server must be accessible from your Home Assistant instance
 - Default server port is 8005
 
@@ -24,13 +24,13 @@ A Home Assistant custom component that provides Text-to-Speech functionality by 
 1. Open HACS in your Home Assistant instance
 2. Go to "Integrations"
 3. Click the "+" button
-4. Search for "HA Chatterbox TTS"
+4. Search for "HA Higgs Audio TTS"
 5. Click "Install"
 6. Restart Home Assistant
 
 ### Manual Installation
 
-1. Download the `ha_chatterbox2` folder
+1. Download the `ha_higgs_audio` folder
 2. Copy it to your `custom_components` directory
 3. Restart Home Assistant
 
@@ -40,17 +40,17 @@ A Home Assistant custom component that provides Text-to-Speech functionality by 
 
 Before configuring this integration, ensure you have:
 
-1. **Chatterbox TTS Server**: Install and run a Chatterbox TTS server
+1. **Higgs Audio TTS Server**: Install and run a Higgs Audio TTS server
 2. **Network Access**: Home Assistant can reach the server (test with `ping` or browser)
-3. **Server Port**: Note the port your Chatterbox server is running on (default: 8005)
+3. **Server Port**: Note the port your Higgs Audio server is running on (default: 8005)
 
 ### Step 1: Add Integration
 
 1. Go to **Settings** → **Devices & Services**
 2. Click **"+ Add Integration"**
-3. Search for **"HA Chatterbox TTS Client"**
-4. Configure your **existing** Chatterbox server settings:
-   - **Host**: IP address where your Chatterbox server is running
+3. Search for **"HA Higgs Audio TTS Client"**
+4. Configure your **existing** Higgs Audio server settings:
+   - **Host**: IP address where your Higgs Audio server is running
    - **Port**: Port number your server uses (default: 8005)
    - **Voice**: Select from voices available on your server
 
@@ -60,7 +60,7 @@ Add the following to your `configuration.yaml`:
 
 ```yaml
 tts:
-  - platform: ha_chatterbox2
+  - platform: ha_Higgs Audio2
 ```
 
 Then restart Home Assistant.
@@ -78,7 +78,7 @@ The integration includes 28 high-quality voices:
 
 ## Configuration Options
 
-- **Host**: Chatterbox server IP address
+- **Host**: Higgs Audio server IP address
 - **Port**: Server port (default: 8005)
 - **Voice**: Choose from available voices
 - **Temperature**: Voice variation (0.0-1.0)
@@ -88,8 +88,8 @@ The integration includes 28 high-quality voices:
 
 Once configured, the TTS service will be available in:
 
-- **Voice Assistants**: Select "HA Chatterbox TTS" as your voice assistant's TTS engine
-- **Automations**: Use the `tts.ha_chatterbox2_say` service
+- **Voice Assistants**: Select "HA Higgs Audio TTS" as your voice assistant's TTS engine
+- **Automations**: Use the `tts.ha_higgs_audio_say` service
 - **Scripts**: Call TTS service with custom messages
 
 ### Example Automation
@@ -102,7 +102,7 @@ automation:
       entity_id: person.your_name
       to: "home"
     action:
-      service: tts.ha_chatterbox2_say
+      service: tts.ha_Higgs Audio2_say
       data:
         entity_id: media_player.living_room
         message: "Welcome home!"
@@ -110,12 +110,12 @@ automation:
 
 ## Troubleshooting
 
-### No Chatterbox Server
+### No Higgs Audio Server
 
 **Error**: "Connection refused" or "Unable to connect"
 
 **Solution**: 
-- Install and start your Chatterbox TTS server first
+- Install and start your Higgs Audio TTS server first
 - Verify the server is running on the configured host/port
 - Test connectivity: `curl http://YOUR_SERVER_IP:8005/health` (if available)
 
@@ -125,15 +125,15 @@ Make sure you have added the platform to `configuration.yaml`:
 
 ```yaml
 tts:
-  - platform: ha_chatterbox2
+  - platform: ha_higgs_audio
 ```
 
 ### Connection Issues
 
-**This integration is a client only** - it requires a separate Chatterbox server:
+**This integration is a client only** - it requires a separate Higgs Audio server:
 
-- **Install Chatterbox Server**: Set up the server software separately
-- **Verify Server Status**: Ensure your Chatterbox server is running and accessible
+- **Install Higgs Audio Server**: Set up the server software separately
+- **Verify Server Status**: Ensure your Higgs Audio server is running and accessible
 - **Check Network**: Confirm Home Assistant can reach the server IP/port
 - **Firewall**: Ensure the server port (default 8005) is not blocked
 
@@ -145,7 +145,7 @@ tts:
 
 ## Support
 
-For issues and feature requests, please visit the [GitHub repository](https://github.com/Jacid23/HA_Chatterbox).
+For issues and feature requests, please visit the [GitHub repository](https://github.com/Jacid23/HA_Higgs Audio).
 
 ## License
 

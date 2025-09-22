@@ -1,25 +1,25 @@
-# Chatterbox TTS Text Inputs for Home Assistant
+# HA Higgs Audio TTS Text Inputs for Home Assistant
 # Add to input_text.yaml or include in configuration.yaml
 
-ha_chatterbox_says:
-  name: "Chatterbox Says"
+ha_higgs_audio_says:
+  name: "Higgs Audio Says"
   max: 500
   initial: ""
   icon: mdi:microphone
 
-ha_chatterbox_last_phrase:
-  name: "Chatterbox Last Phrase"
+ha_higgs_audio_last_phrase:
+  name: "Higgs Audio Last Phrase"
   max: 500
   initial: ""
   icon: mdi:message-text
 
-ha_chatterbox_text:
+ha_higgs_audio_text:
   name: "Text for Voice File"
   max: 500
   initial: ""
   icon: mdi:text
 
-ha_chatterbox_filename:
+ha_higgs_audio_filename:
   name: "Voice File Name"
   max: 50
   initial: "my_voice_file"

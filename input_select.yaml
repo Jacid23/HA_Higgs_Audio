@@ -1,8 +1,8 @@
-# HA Chatterbox TTS Select Inputs for Home Assistant
+# HA Higgs Audio TTS Select Inputs for Home Assistant
 # Updated with all server-supported parameters
 
-ha_chatterbox_voice:
-  name: "HA Chatterbox Voice"
+ha_higgs_audio_voice:
+  name: "HA Higgs Audio Voice"
   options:
     - Emily
     - Gianna
@@ -35,7 +35,7 @@ ha_chatterbox_voice:
   initial: Emily
   icon: mdi:account-voice
 
-ha_chatterbox_speed:
+ha_higgs_audio_speed:
   name: "Speed Factor"
   options:
     - "0.5"
@@ -46,7 +46,7 @@ ha_chatterbox_speed:
   initial: "1.0"
   icon: mdi:speedometer
 
-ha_chatterbox_temperature:
+ha_higgs_audio_temperature:
   name: "Temperature"
   options:
     - "0.0"
@@ -58,7 +58,7 @@ ha_chatterbox_temperature:
   initial: "0.8"
   icon: mdi:thermometer
 
-ha_chatterbox_exaggeration:
+ha_higgs_audio_exaggeration:
   name: "Exaggeration"
   options:
     - "0.5"
@@ -73,7 +73,7 @@ ha_chatterbox_exaggeration:
   initial: "0.9"
   icon: mdi:theater
 
-ha_chatterbox_cfg:
+ha_higgs_audio_cfg:
   name: "CFG Weight"
   options:
     - "0.1"
@@ -83,8 +83,8 @@ ha_chatterbox_cfg:
     - "0.9"
   initial: "0.5"
   icon: mdi:tune-vertical
-  
-ha_chatterbox_seed:
+
+ha_higgs_audio_seed:
   name: "Seed"
   options:
     - "0"

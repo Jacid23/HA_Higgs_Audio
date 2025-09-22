@@ -1,16 +1,16 @@
-# Simple Chatterbox TTS Test Script
+# Simple Higgs Audio TTS Test Script
 # This is just for testing the integration - you can use TTS directly in automations
 
-chatterbox_test:
-  alias: "Test Chatterbox TTS Integration"
+higgs_audio_test:
+  alias: "Test Higgs Audio TTS Integration"
   description: "Simple test to verify the integration is working"
   sequence:
     - service: tts.speak
       target:
-        entity_id: tts.ha_chatterbox
+        entity_id: tts.ha_higgs_audio
       data:
-        message: "Chatterbox TTS integration is working!"
+        message: "Higgs Audio TTS integration is working!"
         options:
-          voice: "{{ states('input_select.ha_chatterbox_voice') }}"
+          voice: "{{ states('input_select.ha_higgs_audio_voice') }}"
 
 
