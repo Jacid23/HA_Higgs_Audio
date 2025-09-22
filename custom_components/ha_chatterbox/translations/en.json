@@ -2,8 +2,8 @@
   "config": {
     "step": {
       "user": {
-        "title": "HA Chatterbox TTS",
-        "description": "Set up your Chatterbox TTS server connection.",
+        "title": "HA Higgs Audio TTS",
+        "description": "Set up your Higgs Audio TTS server connection.",
         "data": {
           "host": "Host",
           "port": "Port",
@@ -12,7 +12,7 @@
       }
     },
     "error": {
-      "cannot_connect": "Failed to connect to the Chatterbox TTS server"
+      "cannot_connect": "Failed to connect to the Higgs Audio TTS server"
     },
     "abort": {
       "already_configured": "Service is already configured"
