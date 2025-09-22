@@ -2,8 +2,8 @@
   "config": {
     "step": {
       "user": {
-        "title": "Chatterbox TTS Setup",
-        "description": "Set up your Chatterbox TTS server",
+        "title": "Higgs Audio TTS Setup",
+        "description": "Set up your Higgs Audio TTS server",
         "data": {
           "host": "Host",
           "port": "Port",
@@ -23,7 +23,7 @@
   "options": {
     "step": {
       "init": {
-        "title": "Chatterbox TTS Options",
+        "title": "Higgs Audio TTS Options",
         "description": "Configure voice and generation options",
         "data": {
           "voice": {
@@ -42,7 +42,7 @@
         }
       },
       "tts_options": {
-        "title": "Chatterbox TTS Options",
+        "title": "Higgs Audio TTS Options",
         "description": "Configure voice and generation options",
         "data": {
           "voice": "Voice",

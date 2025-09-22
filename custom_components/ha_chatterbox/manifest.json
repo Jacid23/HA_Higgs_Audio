@@ -1,9 +1,9 @@
 {
-  "domain": "ha_chatterbox2",
-  "name": "Chatterbox TTS Client",
+  "domain": "ha_higgs_audio",
+  "name": "HA Higgs TTS Client",
   "version": "2.0.3",
-  "documentation": "https://github.com/Jacid23/HA_Chatterbox",
-  "issue_tracker": "https://github.com/Jacid23/HA_Chatterbox/issues",
+  "documentation": "https://github.com/Jacid23/HA_Higgs_Audio",
+  "issue_tracker": "https://github.com/Jacid23/HA_Higgs_Audio/issues",
   "dependencies": ["http"],
   "codeowners": ["@Jacid23"],
   "requirements": ["requests"],

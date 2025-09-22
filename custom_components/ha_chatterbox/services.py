@@ -1,7 +1,7 @@
-# Chatterbox TTS Custom Component Services
+# Higgs Audio TTS Custom Component Services
 # These services are automatically registered when the component loads
 
-"""Services provided by the Chatterbox TTS custom component."""
+"""Services provided by the Higgs Audio TTS custom component."""
 import logging
 import requests
 import voluptuous as vol
@@ -47,7 +47,7 @@ VOICE_SCHEMA = vol.Schema(
 )
 
 def async_setup_services(hass: HomeAssistant) -> None:
-    """Set up services for Chatterbox TTS."""
+    """Set up services for Higgs Audio TTS."""
 
     async def handle_speak(call: ServiceCall) -> None:
         """Handle the speak service call."""
@@ -62,7 +62,7 @@ def async_setup_services(hass: HomeAssistant) -> None:
         # Get the first config entry (assuming single instance)
         config_entries = hass.config_entries.async_entries(DOMAIN)
         if not config_entries:
-            _LOGGER.error("No Chatterbox TTS configuration found")
+            _LOGGER.error("No Higgs Audio TTS configuration found")
             return
             
         config = hass.data[DOMAIN][config_entries[0].entry_id]
@@ -93,13 +93,13 @@ def async_setup_services(hass: HomeAssistant) -> None:
             )
             
             if response.status_code == 200:
-                _LOGGER.info("Chatterbox TTS spoke: %s (voice: %s)", message, voice)
+                _LOGGER.info("Higgs Audio TTS spoke: %s (voice: %s)", message, voice)
                 
                 # Save the audio file permanently (not cache)
                 try:
                     # Use www directory for permanent web-accessible storage
                     config_dir = hass.config.config_dir
-                    output_dir = os.path.join(config_dir, "www", "chatterbox_tts")
+                    output_dir = os.path.join(config_dir, "www", "higgs_audio_tts")
                     os.makedirs(output_dir, exist_ok=True)
                     
                     # Generate timestamp-based filename similar to server
@@ -119,17 +119,17 @@ def async_setup_services(hass: HomeAssistant) -> None:
                     # Continue anyway - don't fail service just because saving failed
                     
             else:
-                _LOGGER.error("Chatterbox TTS speak failed: %s", response.status_code)
+                _LOGGER.error("Higgs Audio TTS speak failed: %s", response.status_code)
                 
         except Exception as ex:
-            _LOGGER.error("Error calling Chatterbox TTS speak service: %s", ex)
+            _LOGGER.error("Error calling Higgs Audio TTS speak service: %s", ex)
 
     async def handle_interrupt(call: ServiceCall) -> None:
         """Handle the interrupt service call."""
         # Get the first config entry (assuming single instance)
         config_entries = hass.config_entries.async_entries(DOMAIN)
         if not config_entries:
-            _LOGGER.error("No Chatterbox TTS configuration found")
+            _LOGGER.error("No Higgs Audio TTS configuration found")
             return
             
         config = hass.data[DOMAIN][config_entries[0].entry_id]
@@ -144,12 +144,12 @@ def async_setup_services(hass: HomeAssistant) -> None:
             )
             
             if response.status_code == 200:
-                _LOGGER.info("Chatterbox TTS interrupted")
+                _LOGGER.info("Higgs Audio TTS interrupted")
             else:
-                _LOGGER.error("Chatterbox TTS interrupt failed: %s", response.status_code)
-                
+                _LOGGER.error("Higgs Audio TTS interrupt failed: %s", response.status_code)
+
         except Exception as ex:
-            _LOGGER.error("Error calling Chatterbox TTS interrupt service: %s", ex)
+            _LOGGER.error("Error calling Higgs Audio TTS interrupt service: %s", ex)
 
     async def handle_set_voice(call: ServiceCall) -> None:
         """Handle the set voice service call."""
@@ -163,8 +163,8 @@ def async_setup_services(hass: HomeAssistant) -> None:
                 "select_option",
                 {ATTR_ENTITY_ID: input_select_entity, "option": voice}
             )
-        
-        _LOGGER.info("Chatterbox TTS voice set to: %s", voice)
+
+        _LOGGER.info("Higgs Audio TTS voice set to: %s", voice)
 
     # Register services
     hass.services.async_register(

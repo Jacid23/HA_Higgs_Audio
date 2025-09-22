@@ -1,4 +1,4 @@
-"""The Chatterbox TTS integration."""
+"""The Higgs Audio TTS integration."""
 import logging
 
 from homeassistant.config_entries import ConfigEntry
@@ -11,12 +11,12 @@ from .const import DOMAIN, DEFAULT_HOST, DEFAULT_PORT
 _LOGGER = logging.getLogger(__name__)
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
-    """Set up the Chatterbox TTS component."""
+    """Set up the Higgs Audio TTS component."""
     hass.data.setdefault(DOMAIN, {})
     return True
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Set up Chatterbox TTS config entry."""
+    """Set up Higgs Audio TTS config entry."""
     host = entry.data.get(CONF_HOST, DEFAULT_HOST)
     port = entry.data.get(CONF_PORT, DEFAULT_PORT)
     hass.data.setdefault(DOMAIN, {})
@@ -26,9 +26,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         "base_url": f"http://{host}:{port}",
         "config_entry": entry
     }
-    
-    _LOGGER.info("Setting up Chatterbox TTS with host: %s, port: %s", host, port)
-    
+
+    _LOGGER.info("Setting up Higgs Audio TTS with host: %s, port: %s", host, port)
+
     # Test connection to server
     try:
         import requests
@@ -37,11 +37,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             requests.get, url, {"timeout": 10}
         )
         if response.status_code != 200:
-            _LOGGER.warning("Chatterbox TTS server not responding at %s, but continuing setup", url)
+            _LOGGER.warning("Higgs Audio TTS server not responding at %s, but continuing setup", url)
     except Exception as ex:
-        _LOGGER.warning("Failed to connect to Chatterbox TTS server: %s, but continuing setup", ex)
-    
-    # Forward setup to TTS platform  
+        _LOGGER.warning("Failed to connect to Higgs Audio TTS server: %s, but continuing setup", ex)
+
+    # Forward setup to TTS platform
     await hass.config_entries.async_forward_entry_setups(entry, ["tts"])
     
     _LOGGER.info("Chatterbox TTS setup complete for entry: %s", entry.entry_id)

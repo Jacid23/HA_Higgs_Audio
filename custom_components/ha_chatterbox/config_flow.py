@@ -1,4 +1,4 @@
-"""Config flow for HA Chatterbox TTS integration."""
+"""Config flow for HA Higgs Audio TTS integration."""
 import logging
 import asyncio
 import voluptuous as vol
@@ -49,8 +49,8 @@ def _load_voices_from_strings():
     _LOGGER.debug("Config flow using fallback voices from const.py")
     return AVAILABLE_VOICES
 
-class HaChatterboxConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
-    """Handle a config flow for HA Chatterbox TTS."""
+class HaHiggsAudioConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
+    """Handle a config flow for HA Higgs Audio TTS."""
 
     VERSION = 1
 
@@ -69,11 +69,11 @@ class HaChatterboxConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 is_valid = await self._test_connection(host, port)
                 if is_valid:
                     return self.async_create_entry(
-                        title=user_input.get(CONF_NAME, f"HA Chatterbox ({host}:{port})"),
+                        title=user_input.get(CONF_NAME, f"HA Higgs Audio ({host}:{port})"),
                         data={
                             CONF_HOST: host,
                             CONF_PORT: port,
-                            CONF_NAME: user_input.get(CONF_NAME, "HA Chatterbox TTS"),
+                            CONF_NAME: user_input.get(CONF_NAME, "HA Higgs Audio TTS"),
                             CONF_VOICE: user_input.get(CONF_VOICE, DEFAULT_VOICE),
                             CONF_TEMPERATURE: user_input.get(CONF_TEMPERATURE, DEFAULT_TEMPERATURE),
                             CONF_EXAGGERATION: user_input.get(CONF_EXAGGERATION, DEFAULT_EXAGGERATION),
@@ -85,10 +85,10 @@ class HaChatterboxConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 else:
                     errors["base"] = "cannot_connect"
             except requests.RequestException:
-                _LOGGER.error("Connection error to HA Chatterbox TTS server")
+                _LOGGER.error("Connection error to HA Higgs Audio TTS server")
                 errors["base"] = "cannot_connect"
             except Exception as ex:
-                _LOGGER.error("Unexpected error connecting to HA Chatterbox TTS: %s", ex)
+                _LOGGER.error("Unexpected error connecting to HA Higgs Audio TTS: %s", ex)
                 errors["base"] = "unknown"
 
         available_voices = _load_voices_from_strings()
@@ -98,7 +98,7 @@ class HaChatterboxConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 {
                     vol.Required(CONF_HOST, default=DEFAULT_HOST): str,
                     vol.Required(CONF_PORT, default=DEFAULT_PORT): vol.Coerce(int),
-                    vol.Optional(CONF_NAME, default="HA Chatterbox TTS"): str,
+                    vol.Optional(CONF_NAME, default="HA Higgs Audio TTS"): str,
                     vol.Optional(CONF_VOICE, default=DEFAULT_VOICE): vol.In(available_voices),
                     vol.Optional(CONF_TEMPERATURE, default=DEFAULT_TEMPERATURE): vol.All(
                         vol.Coerce(float), vol.Range(min=0.0, max=1.0)

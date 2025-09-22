@@ -12,19 +12,19 @@ class GenerationParams(BaseModel):
     temperature: Optional[float] = Field(
         None,  # Defaulting to None means server will use config default if not provided
         ge=0.0,
-        le=1.5,  # Based on Chatterbox Gradio app for temperature
+        le=1.5,  # Based on Higgs Audio Gradio app for temperature
         description="Controls randomness. Lower is more deterministic. (Range: 0.0-1.5)",
     )
     exaggeration: Optional[float] = Field(
         None,
-        ge=0.25,  # Based on Chatterbox Gradio app
-        le=2.0,  # Based on Chatterbox Gradio app
+        ge=0.25,  # Based on Higgs Audio Gradio app
+        le=2.0,  # Based on Higgs Audio Gradio app
         description="Controls expressiveness/exaggeration. (Range: 0.25-2.0)",
     )
     cfg_weight: Optional[float] = Field(
         None,
-        ge=0.2,  # Based on Chatterbox Gradio app
-        le=1.0,  # Based on Chatterbox Gradio app
+        ge=0.2,  # Based on Higgs Audio Gradio app
+        le=1.0,  # Based on Higgs Audio Gradio app
         description="Classifier-Free Guidance weight. Influences adherence to prompt/style and pacing. (Range: 0.2-1.0)",
     )
     seed: Optional[int] = Field(

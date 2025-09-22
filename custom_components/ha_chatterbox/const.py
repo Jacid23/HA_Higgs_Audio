@@ -1,6 +1,6 @@
-"""Constants for the Chatterbox TTS integration."""
+"""Constants for the Higgs Audio TTS integration."""
 
-DOMAIN = "ha_chatterbox2"
+DOMAIN = "ha_higgs_audio"
 
 # Default connection settings
 DEFAULT_HOST = "172.30.3.9"

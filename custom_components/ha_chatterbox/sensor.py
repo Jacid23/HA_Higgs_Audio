@@ -1,7 +1,7 @@
 """
-Chatterbox TTS Sensor Platform for Home Assistant
+Higgs Audio TTS Sensor Platform for Home Assistant
 
-Provides sensors for monitoring Chatterbox TTS server status and queue.
+Provides sensors for monitoring Higgs Audio TTS server status and queue.
 """
 import logging
 import requests
@@ -34,7 +34,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
 )
 
 def setup_platform(hass, config, add_entities, discovery_info=None):
-    """Set up the Chatterbox TTS sensor platform."""
+    """Set up the Higgs Audio TTS sensor platform."""
     host = config.get(CONF_HOST, DEFAULT_HOST)
     port = config.get(CONF_PORT, DEFAULT_PORT)
     scan_interval = config.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL)
@@ -42,8 +42,8 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     base_url = f"http://{host}:{port}"
     
     sensors = [
-       ChatterboxTTSQueueSensor(base_url, scan_interval),
-       ChatterboxTTSStatusSensor(base_url, scan_interval),
+       HiggsAudioTTSQueueSensor(base_url, scan_interval),
+       HiggsAudioTTSStatusSensor(base_url, scan_interval),
     ]
     
     add_entities(sensors, True)
@@ -51,9 +51,9 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
 async def async_setup_entry(
     hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
 ) -> None:
-    """Set up Chatterbox TTS sensors from a config entry."""
-    _LOGGER.debug("Setting up Chatterbox TTS sensors from config entry")
-    
+    """Set up Higgs Audio TTS sensors from a config entry."""
+    _LOGGER.debug("Setting up Higgs Audio TTS sensors from config entry")
+
     # Get the stored configuration from the integration
     data = hass.data[DOMAIN][entry.entry_id]
     base_url = data["base_url"]
@@ -62,15 +62,15 @@ async def async_setup_entry(
     scan_interval = DEFAULT_SCAN_INTERVAL
     
     sensors = [
-        ChatterboxTTSQueueSensor(base_url, scan_interval),
-        ChatterboxTTSStatusSensor(base_url, scan_interval),
+       HiggsAudioTTSQueueSensor(base_url, scan_interval),
+       HiggsAudioTTSStatusSensor(base_url, scan_interval),
     ]
     
     async_add_entities(sensors, True)
-    _LOGGER.debug("Added %d Chatterbox TTS sensors", len(sensors))
+    _LOGGER.debug("Added %d Higgs Audio TTS sensors", len(sensors))
 
-class ChatterboxTTSStatusSensor(Entity):
-    """Representation of Chatterbox TTS server status sensor."""
+class HiggsAudioTTSStatusSensor(Entity):
+    """Representation of Higgs Audio TTS server status sensor."""
 
     def __init__(self, base_url, scan_interval):
         """Initialize the sensor."""
@@ -83,12 +83,12 @@ class ChatterboxTTSStatusSensor(Entity):
     @property
     def name(self):
         """Return the name of the sensor."""
-        return "Chatterbox TTS Status"
+        return "Higgs Audio TTS Status"
 
     @property
     def unique_id(self):
         """Return unique ID for this sensor."""
-        return "chatterbox_tts_status"
+        return "higgs_audio_tts_status"
 
     @property
     def state(self):
@@ -128,10 +128,10 @@ class ChatterboxTTSStatusSensor(Entity):
         except requests.exceptions.RequestException:
             self._state = "unavailable" 
             self._available = False
-            _LOGGER.warning("Could not connect to Chatterbox TTS server")
+            _LOGGER.warning("Could not connect to Higgs Audio TTS server")
 
-class ChatterboxTTSQueueSensor(Entity):
-    """Representation of Chatterbox TTS queue sensor."""
+class HiggsAudioTTSQueueSensor(Entity):
+    """Representation of Higgs Audio TTS queue sensor."""
 
     def __init__(self, base_url, scan_interval):
         """Initialize the sensor."""
@@ -144,12 +144,12 @@ class ChatterboxTTSQueueSensor(Entity):
     @property
     def name(self):
         """Return the name of the sensor."""
-        return "Chatterbox TTS Queue"
+        return "Higgs Audio TTS Queue"
 
     @property
     def unique_id(self):
         """Return unique ID for this sensor."""
-        return "Chatterbox_tts_queue"
+        return "Higgs_Audio_tts_queue"
 
     @property
     def state(self):
@@ -194,4 +194,4 @@ class ChatterboxTTSQueueSensor(Entity):
         except requests.exceptions.RequestException:
             self._state = None
             self._available = False
-            _LOGGER.warning("Could not get Chatterbox TTS queue status")
+            _LOGGER.warning("Could not get Higgs Audio TTS queue status")
